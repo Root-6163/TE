@@ -1,3 +1,13 @@
+"
+    2 (b) Design and Develop SQL DDL statements which demonstrate the use of SQL objects such as Table,view ,index
+Consider :Student (Roll, Name, Address) 
+Subject (sub_code, sub_name)
+Marks (Roll, sub_code, marks)
+1. Create Tables.
+2.create view on Subject
+3.Create Index on Marks with sub_code.
+    "
+    
 CREATE TABLE Student (
     Roll INT PRIMARY KEY,
     Name VARCHAR(50),
