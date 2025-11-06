@@ -1,0 +1,97 @@
+"
+3(b)  Design  SQL queries for suitable database application using SQL DML statements: 
+
+
+
+
+
+
+
+(i) To display NAME AND DESIG of those employees whose sgrade is either „S02‟ or „S03‟
+(ii) To display NAME, DESIG, SGRADE of those employee who joined in the year 2009
+(iii) To display all SGRADE, ANNUAL_SALARY from table SALGRADE [where ANNUAL_SALARY = SALARY*12]
+(iv) To display number of employee working in each SALGRADE from table EMPLOYEE
+(v) To display NAME, DESIG, SALARY, HRA from tables EMPLOYEE and SALGRADE where SALARY is less than 50000
+(vi) Select MIN(DOJ), MAX(DOB) from employee;
+(vii) Select SGrade,Salary+HRA from SalGrade where Sgrade=‟S02‟
+(viii) Select count(distinct sgrade) from employee
+(ix) Select sum(salary), avg(salary) from salgrade
+
+
+"
+-- Create Tsble
+-- Create EMPLOYEE table
+CREATE TABLE EMPLOYEE (
+    ECODE INT PRIMARY KEY,
+    NAME VARCHAR(50),
+    DESIG VARCHAR(50),
+    SGRADE VARCHAR(10),
+    DOJ DATE,
+    DOB DATE
+);
+
+-- Create SALGRADE table
+CREATE TABLE SALGRADE (
+    SGRADE VARCHAR(10) PRIMARY KEY,
+    SALARY INT,
+    HRA INT
+);
+
+-- Insert Values : 
+-- Insert data into EMPLOYEE table
+INSERT INTO EMPLOYEE (ECODE, NAME, DESIG, SGRADE, DOJ, DOB) VALUES
+(101, 'Vikrant', 'Executive', 'S03', '2003-03-23', '1980-01-13'),
+(102, 'Ravi', 'Head-IT', 'S02', '2010-02-12', '1987-07-22'),
+(103, 'John Cena', 'Receptionist', 'S03', '2009-06-24', '1983-02-24'),
+(105, 'Azhar Ansari', 'GM', 'S02', '2009-08-11', '1984-03-03'),
+(108, 'Priyam Sen', 'CEO', 'S01', '2004-12-29', '1982-01-19');
+
+-- Insert data into SALGRADE table
+INSERT INTO SALGRADE (SGRADE, SALARY, HRA) VALUES
+('S01', 56000, 18000),
+('S02', 32000, 12000),
+('S03', 24000, 8000);
+
+-- dISPLAY NAME AND DESIG OF EMPLOYEES WHOSE SGRADE IS EITHER 'SO2 ' AMD 'S03'
+
+SELECT NAME, DESIG
+FROM EMPLOYEE
+WHERE SGRADE IN ('S02', 'S03');
+
+-- DISPLAY NAME ,DESIG,SGRADE OF EMPLOYEES WHO JOINED IN THE YEAR 2009
+
+SELECT NAME, DESIG, SGRADE
+FROM EMPLOYEE
+WHERE YEAR(DOJ) = 2009;
+
+--DISPLAY ALL SGRADE ,ANNUAL-SALARY FROM SALGRADE )ANNUAL_SALARY = SALARY * 12)
+SELECT SGRADE, (SALARY * 12) AS ANNUAL_SALARY
+FROM SALGRADE;
+
+-- DISPLAY NAME , DESIG ,SALARY ,HRA FROM EMPLOYEE AND SALGRADE WHERE SALARY < 50000
+SELECT E.NAME, E.DESIG, S.SALARY, S.HRA
+FROM EMPLOYEE E
+JOIN SALGRADE S ON E.SGRADE = S.SGRADE
+WHERE S.SALARY < 50000;
+
+-- SELECT MIN(DOJ) MAX (DOB) FROM EMPLOYEE
+
+SELECT MIN(DOJ) AS Earliest_Join_Date,
+       MAX(DOB) AS Latest_Birth_Date
+FROM EMPLOYEE;
+
+--SELECTT SGRADE (Salary  + HRA ) FROM SALGRADE
+SELECT SGRADE, (SALARY + HRA) AS TOTAL_COMPENSATION
+FROM SALGRADE
+WHERE SGRADE = 'S02';
+
+-- SELECT COUNT(DISTINCT SGRADE ) FROM EMPLOYEE
+
+SELECT COUNT(DISTINCT SGRADE) AS DISTINCT_SGRADES
+FROM EMPLOYEE;
+
+-- SELECT SUM (SALARY ) , AVG(SALARY) FROM SALGRADE
+SELECT SUM(SALARY) AS TOTAL_SALARY,
+       AVG(SALARY) AS AVERAGE_SALARY
+FROM SALGRADE;
+
