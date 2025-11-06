@@ -1,3 +1,14 @@
+"
+3 (a) Design  SQL queries for suitable database application using SQL DML statements: 
+Consider :Student (Roll, Name, Address) 
+Subject (sub_code, sub_name)
+Marks (Roll, sub_code, marks)
+1.Insert  5 minimum values in all tables
+2. Update row where the values are subcode=”DMS”
+3. find the student whose marks are less<75.
+4. Delete the record of the student whose name=”Pratik”
+"
+
 -- Create Tables 
 CREATE TABLE Student (
     Roll INT PRIMARY KEY,
