@@ -1,3 +1,16 @@
+"
+    2 (a) Design and Develop SQL DDL statements which demonstrate the use of SQL objects such as Table.
+Consider :Student (Roll, Name, Address) 
+Subject (sub_code, sub_name
+Marks (Roll, sub_code, marks)	
+        1. Create Tables.
+        2. Add new column  DOB into the table Student.
+        3. Modify the data types of any column.
+        4. Rename the column name sub_code to code.
+        5. Rename the table name Subject to Sub.
+        6. Drop the tables .
+        7. Truncate the  tables
+    "
 ##
 " Create Table "
 CREATE TABLE Student (
