@@ -69,3 +69,63 @@ UPDATE library SET allowed_days = 17 WHERE bno = 5;
 -- ============================================================
 SELECT * FROM library;
 SELECT * FROM library_audit;
+
+
+--copy Paste
+CREATE DATABASE lib;
+USE lib;
+
+CREATE TABLE library (
+    bno INT(5),
+    bname VARCHAR(40),
+    author VARCHAR(30),
+    allowed_days INT(5)
+);
+
+CREATE TABLE library_audit (
+    bno INT(5),
+    bname VARCHAR(40),
+    author VARCHAR(30),
+    old_allowed_days INT(5),
+    new_allowed_days INT(5),
+    action_type VARCHAR(20),
+    action_date DATETIME
+);
+
+INSERT INTO library VALUES
+(1, 'Database Systems', 'Connally T', 10),
+(2, 'System Programming', 'John Donovan', 20),
+(3, 'Computer Networks', 'Douglas Comer', 18),
+(4, 'Agile Project Management', 'Ken Schwaber', 24),
+(5, 'Python for Data Analysis', 'Wes McKinney', 12);
+
+DELIMITER $$
+
+CREATE TRIGGER trg_library_update
+BEFORE UPDATE ON library
+FOR EACH ROW
+BEGIN
+    INSERT INTO library_audit 
+        (bno, bname, author, old_allowed_days, new_allowed_days, action_type, action_date)
+    VALUES 
+        (OLD.bno, OLD.bname, OLD.author, OLD.allowed_days, NEW.allowed_days, 'UPDATE', NOW());
+END$$
+
+CREATE TRIGGER trg_library_delete
+BEFORE DELETE ON library
+FOR EACH ROW
+BEGIN
+    INSERT INTO library_audit 
+        (bno, bname, author, old_allowed_days, new_allowed_days, action_type, action_date)
+    VALUES 
+        (OLD.bno, OLD.bname, OLD.author, OLD.allowed_days, NULL, 'DELETE', NOW());
+END$$
+
+DELIMITER ;
+
+UPDATE library SET allowed_days = 15 WHERE bno = 1;
+UPDATE library SET allowed_days = 25 WHERE bno = 2;
+DELETE FROM library WHERE bno = 5;
+
+SELECT * FROM library;
+SELECT * FROM library_audit;
