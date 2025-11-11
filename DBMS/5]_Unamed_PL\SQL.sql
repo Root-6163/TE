@@ -77,7 +77,7 @@ BEGIN
         INSERT INTO fine VALUES(roll, CURDATE(), fine1);
 
     ELSEIF noofdays > 30 THEN
-        SET fine1 = ((noofdays - 30) * 5) + (15 * 5);
+        SET fine1 = ((noofdays - 30) * 50) + (15 * 5);
         INSERT INTO fine VALUES(roll, CURDATE(), fine1);
 
     ELSE
