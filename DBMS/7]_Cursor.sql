@@ -4,71 +4,67 @@
   Write a PL/SQL block of code using parameterized Cursor, that will merge the data available in the newly created table Cust_New with the data available in the table Cust_Old.
   If the data in the first table already exist in the second table then that data should be skipped.
 "
+CREATE DATABASE class;
+USE class;
 
-create database class;
-use class;
-create table O_RollCall(roll_no int(3),name varchar(20));
-create table N_RollCall(roll_no int(3),name varchar(20));
-insert into O_RollCall values (1,'Himanshu');
-insert into O_RollCall values (2,'Ram');
-insert into O_RollCall values (3,'Soham');
-insert into O_RollCall values (5,'Mohan');
-insert into O_RollCall values (6,'Om');
-insert into O_RollCall values (9,'Yash');
-insert into O_RollCall values (11,'Mayur');
-select * from O_RollCall;
-select * from N_RollCall;
-delimiter //
-create procedure cursor_proc_p1()
-begin
-declare fin integer default 0;
-declare old_roll int(3);
-declare old_name varchar(20);
-declare new_roll int(3);
-declare old_csr cursor for select roll_no,name from O_RollCall;
-declare new_csr cursor for select roll_no from N_RollCall;
-declare continue handler for not found set fin=1;
-open old_csr;
-open new_csr;
-ss:loop
-fetch old_csr into old_roll,old_name;
-fetch new_csr into new_roll;
-if fin=1 then
-leave ss;
-end if;
-if old_roll<>new_roll then
-insert into N_RollCall values(old_roll,old_name);
-end if;
-end loop;
-close old_csr;
-close new_csr;
-end //
-create procedure cursor_proc_p2(in r1 int)
-begin
-declare r2 int;
-declare exit_loop boolean;
-declare c1 cursor for select roll_no from O_RollCall
-where roll_no>r1;
-declare continue handler for not found set
-exit_loop=true;
-open c1;
-e_loop:loop
-fetch c1 into r2;
-if not exists(select * from N_RollCall where roll_no=r2)
-then
-insert into N_RollCall select * from O_RollCall where roll_no=r2;
-end if;
-if exit_loop
-then
-close c1;
-leave e_loop;
-end if;
-end loop e_loop;
-end;//
-call cursor_proc_p2(5); //
-select * from O_RollCall; //
-select * from N_RollCall; //
-call cursor_proc_p2(3); //
-call cursor_proc_p1(); //
-select * from O_RollCall; //
-select * from N_RollCall; //
+CREATE TABLE Cust_Old (
+    cust_id INT PRIMARY KEY,
+    cust_name VARCHAR(30)
+);
+
+CREATE TABLE Cust_New (
+    cust_id INT,
+    cust_name VARCHAR(30)
+);
+
+INSERT INTO Cust_Old VALUES 
+(1, 'Himanshu'),
+(2, 'Ram'),
+(3, 'Soham'),
+(5, 'Mohan'),
+(6, 'Om'),
+(9, 'Yash'),
+(11, 'Mayur');
+
+INSERT INTO Cust_New VALUES 
+(2, 'Ram'),
+(4, 'Amit'),
+(7, 'Sakshi'),
+(9, 'Yash'),
+(12, 'Rohan');
+
+DELIMITER $$
+
+CREATE PROCEDURE merge_customer_data(IN min_id INT)
+BEGIN
+    DECLARE v_id INT;
+    DECLARE v_name VARCHAR(30);
+    DECLARE done BOOLEAN DEFAULT FALSE;
+
+    DECLARE cur_merge CURSOR FOR
+        SELECT cust_id, cust_name FROM Cust_New WHERE cust_id > min_id;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    OPEN cur_merge;
+
+    read_loop: LOOP
+        FETCH cur_merge INTO v_id, v_name;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        IF NOT EXISTS (SELECT * FROM Cust_Old WHERE cust_id = v_id) THEN
+            INSERT INTO Cust_Old VALUES (v_id, v_name);
+        END IF;
+    END LOOP;
+
+    CLOSE cur_merge;
+END$$
+
+DELIMITER ;
+
+CALL merge_customer_data(0);
+
+SELECT * FROM Cust_Old;
+SELECT * FROM Cust_New;
